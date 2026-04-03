@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Pelanggans\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use Filament\Schemas\Components\View;
 use Filament\Tables\Table;
 use Filament\Tables;
 
@@ -44,9 +44,18 @@ class PelanggansTable
             ->filters([
                 //
             ])
+            ->headerActions([
+                CreateAction::make()
+                    ->slideOver()
+                    ->modalHeading('Tambah Pelanggan')
+                    ->modalWidth('lg'),
+            ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalHeading('Edit Pelanggan')
+                    ->modalWidth('lg'),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

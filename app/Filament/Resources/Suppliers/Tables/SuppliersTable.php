@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Suppliers\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
@@ -47,9 +48,18 @@ class SuppliersTable
             ->filters([
                 //
             ])
+            ->headerActions([
+                CreateAction::make()
+                    ->slideOver()
+                    ->modalHeading('Tambah Supplier')
+                    ->modalWidth('lg'),
+            ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalHeading('Edit Supplier')
+                    ->modalWidth('lg'),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

@@ -43,8 +43,8 @@ class PelangganResource extends Resource
     {
         return [
             'index' => ListPelanggans::route('/'),
-            'create' => CreatePelanggan::route('/create'),
-            'edit' => EditPelanggan::route('/{record}/edit'),
+            // 'create' => CreatePelanggan::route('/create'),
+            // 'edit' => EditPelanggan::route('/{record}/edit'),
         ];
     }
 }

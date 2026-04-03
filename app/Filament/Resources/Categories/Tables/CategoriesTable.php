@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Categories\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 // use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables;
@@ -35,9 +36,18 @@ class CategoriesTable
             ->filters([
                 //
             ])
+            ->headerActions([
+                CreateAction::make()
+                    ->slideOver()
+                    ->modalHeading('Tambah Category')
+                    ->modalWidth('lg'),
+            ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalHeading('Edit Category')
+                    ->modalWidth('lg'),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
