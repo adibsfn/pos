@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Session extends Model
+class Session extends BaseModel
 {
+    protected static bool $logEnabled = true;
     protected $table = 'sessions';
 
     public $timestamps = false;

@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
-class product extends Model
+class product extends BaseModel
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory;
+    protected static bool $logEnabled = true;
+
     protected $fillable = [
         'nama',
         'category_id',
