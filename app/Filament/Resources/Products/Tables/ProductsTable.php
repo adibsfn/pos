@@ -57,12 +57,10 @@ class ProductsTable
                     ->sortable(),
             ])
             ->filters([
-                // 📂 KATEGORI
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('Kategori')
                     ->relationship('category', 'nama'),
 
-                // 📊 STATUS STOK
                 Tables\Filters\SelectFilter::make('stock_status')
                     ->label('Status Stok')
                     ->options([
@@ -93,7 +91,7 @@ class ProductsTable
 
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Status')
-                    ->placeholder('All') // 🔥 INI KUNCINYA
+                    ->placeholder('All')
                     ->trueLabel('Aktif')
                     ->falseLabel('Tidak Aktif'),
             ])
