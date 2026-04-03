@@ -9,6 +9,7 @@ use App\Filament\Resources\Pelanggans\Schemas\PelangganForm;
 use App\Filament\Resources\Pelanggans\Tables\PelanggansTable;
 use App\Models\Pelanggan;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +19,11 @@ class PelangganResource extends Resource
 {
     protected static ?string $model = Pelanggan::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+    protected static UnitEnum|string|null $navigationGroup = 'Management';
+    protected static ?int $navigationSort = 4;
     protected static ?string $recordTitleAttribute = 'pelanggan';
+    protected static ?string $navigationLabel = 'Pelanggan';
 
     public static function form(Schema $schema): Schema
     {
