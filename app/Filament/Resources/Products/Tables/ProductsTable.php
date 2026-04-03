@@ -26,6 +26,7 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama')
                     ->searchable()
+                    ->searchable(['nama', 'barcode'])
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.nama')
                     ->label('Kategori')
@@ -56,7 +57,45 @@ class ProductsTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                // 📂 KATEGORI
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('Kategori')
+                    ->relationship('category', 'nama'),
+
+                // 📊 STATUS STOK
+                Tables\Filters\SelectFilter::make('stock_status')
+                    ->label('Status Stok')
+                    ->options([
+                        'habis' => 'Habis',
+                        'menipis' => 'Menipis',
+                        'aman' => 'Aman',
+                    ])
+                    ->query(function ($query, $data) {
+
+                        $value = $data['value'] ?? null;
+
+                        if ($value === 'habis') {
+                            $query->where('stock', '<=', 0);
+                        }
+
+                        if ($value === 'menipis') {
+                            $query->whereColumn('stock', '<=', 'minimum_stock')
+                                ->where('stock', '>', 0);
+                        }
+
+                        if ($value === 'aman') {
+                            $query->whereColumn('stock', '>', 'minimum_stock');
+                        }
+
+                        return $query;
+                    }),
+
+
+                Tables\Filters\TernaryFilter::make('is_active')
+                    ->label('Status')
+                    ->placeholder('All') // 🔥 INI KUNCINYA
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Tidak Aktif'),
             ])
             ->recordActions([
                 ViewAction::make(),

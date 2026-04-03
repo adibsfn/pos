@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Schemas\Schema;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
