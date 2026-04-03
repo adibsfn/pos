@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Categories\Tables;
+namespace App\Filament\Resources\Suppliers\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-// use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class CategoriesTable
+class SuppliersTable
 {
     public static function configure(Table $table): Table
     {
@@ -22,8 +22,20 @@ class CategoriesTable
                     ->label('Nama')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('deskripsi')
-                    ->label('Deskripsi')
+                Tables\Columns\TextColumn::make('contact_person')
+                    ->label('Contact Person')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('telepon')
+                    ->label('Telepon')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('alamat')
+                    ->label('Alamat')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -40,7 +52,7 @@ class CategoriesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    // DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
