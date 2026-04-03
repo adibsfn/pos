@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Pelanggans;
 
-use App\Filament\Resources\Pelanggans\Pages\CreatePelanggan;
-use App\Filament\Resources\Pelanggans\Pages\EditPelanggan;
+// use App\Filament\Resources\Pelanggans\Pages\CreatePelanggan;
+// use App\Filament\Resources\Pelanggans\Pages\EditPelanggan;
 use App\Filament\Resources\Pelanggans\Pages\ListPelanggans;
 use App\Filament\Resources\Pelanggans\Schemas\PelangganForm;
 use App\Filament\Resources\Pelanggans\Tables\PelanggansTable;
@@ -25,6 +25,10 @@ class PelangganResource extends Resource
     protected static ?string $recordTitleAttribute = 'pelanggan';
     protected static ?string $navigationLabel = 'Pelanggan';
 
+    public static function getPluralModelLabel(): string
+    {
+        return 'Pelanggan';
+    }
     public static function form(Schema $schema): Schema
     {
         return PelangganForm::configure($schema);

@@ -25,6 +25,10 @@ class SatuanResource extends Resource
     protected static ?string $navigationLabel = 'Satuan';
     protected static ?string $recordTitleAttribute = 'satuan';
 
+    public static function getPluralModelLabel(): string
+    {
+        return 'Satuan';
+    }
     public static function form(Schema $schema): Schema
     {
         return SatuanForm::configure($schema);
