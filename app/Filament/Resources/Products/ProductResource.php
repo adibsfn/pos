@@ -24,7 +24,10 @@ class ProductResource extends Resource
     protected static UnitEnum|string|null $navigationGroup = 'Management';
     protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'Produk';
-
+    public static function getMaxContentWidth(): string
+    {
+        return 'full';
+    }
     public static function getPluralModelLabel(): string
     {
         return 'Produk';

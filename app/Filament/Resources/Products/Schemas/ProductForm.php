@@ -15,7 +15,30 @@ class ProductForm
         return $schema
         ->components([
 
-            // 🔹 SECTION 1: INFORMASI PRODUK
+            Section::make('Barcode & Gambar')
+                ->schema([
+                    Grid::make(1)->schema([
+                        Forms\Components\TextInput::make('barcode')
+                            ->label('Barcode')
+                            ->suffix(
+                                new \Illuminate\Support\HtmlString('
+                                    <button type="button"
+                                        onclick="startZXingScanner()"
+                                        style="background:none;border:none;cursor:pointer;">
+                                        📷
+                                    </button>
+                                ')
+                            ),
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Gambar')
+                            ->disk('public')
+                            ->directory('products')
+                            ->image()
+                            ->imagePreviewHeight('120'),
+                    ]),
+                    View::make('filament.components.zxing-scanner'),
+                ]),
+
             Section::make('Informasi Produk')
                 ->schema([
                     Grid::make(2)->schema([
@@ -39,35 +62,6 @@ class ProductForm
                     ]),
                 ]),
 
-            // 🔹 SECTION 2: BARCODE & IMAGE
-            Section::make('Barcode & Gambar')
-                ->schema([
-                    Grid::make(2)->schema([
-
-                        Forms\Components\TextInput::make('barcode')
-                            ->label('Barcode')
-                            ->suffix(
-                                new \Illuminate\Support\HtmlString('
-                                    <button type="button"
-                                        onclick="startZXingScanner()"
-                                        style="background:none;border:none;cursor:pointer;">
-                                        📷
-                                    </button>
-                                ')
-                            ),
-
-                        Forms\Components\FileUpload::make('image')
-                            ->label('Gambar')
-                            ->disk('public')
-                            ->directory('products')
-                            ->image()
-                            ->imagePreviewHeight('120'),
-                    ]),
-
-                    View::make('filament.components.zxing-scanner'),
-                ]),
-
-            // 🔹 SECTION 3: HARGA & STOK
             Section::make('Harga & Stok')
                 ->schema([
                     Grid::make(3)->schema([
