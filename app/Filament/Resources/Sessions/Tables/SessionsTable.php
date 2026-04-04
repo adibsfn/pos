@@ -6,6 +6,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SessionsTable
 {
@@ -67,7 +69,22 @@ class SessionsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->visible(fn ($record) => $record->id !== session()->getId())
+                    ->action(function ($record) {
+
+                        // log manual (AMAN)
+                        activity()
+                            ->causedBy(Auth::user())
+                            ->withProperties([
+                                'session_id' => $record->id,
+                                'ip' => $record->ip_address,
+                            ])
+                            ->log('Session deleted');
+
+                        // delete session
+                        DB::table('sessions')->where('id', $record->id)->delete();
+                    })
             ])
             ->toolbarActions([
             ]);

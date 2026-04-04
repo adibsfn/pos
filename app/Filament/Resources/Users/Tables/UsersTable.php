@@ -9,6 +9,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Support\Facades\Auth;
 
 class UsersTable
 {
@@ -60,12 +61,13 @@ class UsersTable
                     ->slideOver()
                     ->modalHeading('Edit User')
                     ->modalWidth('lg'),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->visible(fn ($record) => $record->id !== Auth::id()),
             ])
 
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

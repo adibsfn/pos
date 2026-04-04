@@ -32,13 +32,14 @@ class RolesTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->visible(fn ($record) => $record->name !== 'super_admin'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }
