@@ -34,6 +34,10 @@ class product extends BaseModel
     {
         return $this->belongsTo(Satuan::class);
     }
+    public function transactionitems()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 
     //delete old image when updating or deleting product
     protected static function booted()
