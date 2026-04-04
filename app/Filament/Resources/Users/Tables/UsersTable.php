@@ -8,7 +8,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Auth;
 
 class UsersTable
