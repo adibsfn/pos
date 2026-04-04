@@ -29,11 +29,18 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->globalSearch(false)
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('10s')
+            ->renderHook(
+                'panels::body.end',
+                fn () => view('filament.hooks.notification-sound')
+            )
             ->spa()
             ->maxContentWidth('full')
             ->sidebarCollapsibleOnDesktop()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Green,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
