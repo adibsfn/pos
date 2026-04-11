@@ -26,9 +26,9 @@ class product extends BaseModel
         'is_active',
     ];
 
-    public function category()
+    public function products()
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(Product::class, 'category_id');
     }
     public function satuan()
     {
@@ -37,6 +37,10 @@ class product extends BaseModel
     public function transactionitems()
     {
         return $this->hasMany(TransactionItem::class);
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     //delete old image when updating or deleting product
