@@ -108,7 +108,7 @@
                         <div class="p-3">
                             <div class="flex items-start justify-between mb-2">
                                 <div class="text-sm font-medium text-gray-800 truncate flex-1" x-text="product.nama"></div>
-                                <div class="ml-2 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0">
+                                <div :class="'ml-2 px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ' + (product.stock < product.minimum_stock ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800')">
                                     <span x-text="format(product.stock)"></span>
                                 </div>
                             </div>
@@ -286,6 +286,11 @@
                         <span class="text-xs text-gray-500">%</span>
                     </div>
                 </div>
+                <!-- JUMLAH PPN -->
+                <div class="flex justify-between pl-2 pr-12 text-xs text-gray-500">
+                    <span>Total Pajak:</span>
+                    <span class="font-medium text-green-600" x-text="format(subtotal() * (tax / 100))"></span>
+                </div>
             </div>
 
             <div class="pt-3 border-t">
@@ -296,7 +301,7 @@
 
                 <button
                     class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm"
-                    @click="$wire.checkout()"
+                    @click="showPaymentModal = true"
                     :disabled="!cart.length"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -307,7 +312,190 @@
             </div>
         </div>
     </div>
+    <!-- PAYMENT MODAL -->
+<div
+    x-show="showPaymentModal"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    @click.away="showPaymentModal = false"
+    @keydown.escape.window="showPaymentModal = false"
+>
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" @click.stop>
+        <!-- HEADER MODAL -->
+        <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-t-2xl">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold">Proses Pembayaran</h2>
+                <button @click="showPaymentModal = false" class="p-2 hover:bg-white/20 rounded-xl transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
 
+        <!-- BODY MODAL -->
+        <div class="p-6 space-y-6">
+            <!-- TOTAL FINAL -->
+            <div class="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-2xl border-2 border-green-200">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-lg font-semibold text-gray-800">Total Harus Dibayar</span>
+                </div>
+                <div class="text-3xl font-bold text-green-600 flex items-baseline">
+                    Rp <span x-text="format(total())"></span>
+                </div>
+            </div>
+
+            <!-- FORM INPUT -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- CUSTOMER & TANGGAL -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Customer</label>
+                        <input
+                            type="text"
+                            x-model="selectedCustomer"
+                            placeholder="Nama customer (opsional)"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-400"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                        <input
+                            type="date"
+                            x-model="paymentDate"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-400"
+                        >
+                    </div>
+                </div>
+
+                <!-- METODE BAYAR & NOMINAL -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Metode Pembayaran</label>
+                        <select
+                            x-model="paymentMethod"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-400"
+                        >
+                            <option value="tunai">💵 Tunai</option>
+                            <option value="debit">💳 Debit</option>
+                            <option value="kredit">💳 Kredit</option>
+                            <option value="transfer">🏦 Transfer</option>
+                            <option value="qris">📱 QRIS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nominal Bayar</label>
+                        <div class="flex gap-2">
+                            <input
+                                type="number"
+                                x-model.number="nominalBayar"
+                                min="0"
+                                class="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-400 text-right font-semibold"
+                                placeholder="0"
+                            >
+                            <div class="flex flex-col gap-1">
+                                <template x-for="option in pembayaranOptions" :key="option">
+                                    <button
+                                        @click="nominalBayar = total()"
+                                        x-show="option === 'uang pas'"
+                                        class="w-12 h-10 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold text-sm transition-all shadow-sm"
+                                        title="Uang Pas"
+                                    >
+                                        Pas
+                                    </button>
+                                    <button
+                                        @click="nominalBayar += 10000"
+                                        x-show="option === '10rb'"
+                                        class="w-12 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-all shadow-sm"
+                                        title="10 Ribu"
+                                    >
+                                        10K
+                                    </button>
+                                    <button
+                                        @click="nominalBayar += 20000"
+                                        x-show="option === '20rb'"
+                                        class="w-12 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-all shadow-sm"
+                                        title="20 Ribu"
+                                    >
+                                        20K
+                                    </button>
+                                    <button
+                                        @click="nominalBayar += 50000"
+                                        x-show="option === '50rb'"
+                                        class="w-12 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-all shadow-sm"
+                                        title="50 Ribu"
+                                    >
+                                        50K
+                                    </button>
+                                    <button
+                                        @click="nominalBayar += 100000"
+                                        x-show="option === '100rb'"
+                                        class="w-12 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-all shadow-sm"
+                                        title="100 Ribu"
+                                    >
+                                        100K
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KEMBALIAN -->
+            <div class="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-semibold text-lg text-gray-800">Kembalian</div>
+                        <div class="text-sm text-gray-600" x-show="paymentMethod === 'tunai'">
+                            (Hanya untuk pembayaran tunai)
+                        </div>
+                    </div>
+                    <div :class="{
+                        'text-2xl font-bold text-green-600': kembalian() >= 0,
+                        'text-2xl font-bold text-red-600 animate-pulse': kembalian() < 0
+                    }">
+                        <span x-show="kembalian() >= 0">Rp <span x-text="format(Math.abs(kembalian()))"></span></span>
+                        <span x-show="kembalian() < 0">
+                            <span>Rp <span x-text="format(Math.abs(kembalian()))"></span></span>
+                            <span class="ml-2 text-sm bg-red-100 text-red-800 px-2 py-1 rounded-full font-bold">KURANG</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER MODAL -->
+        <div class="p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex gap-3">
+            <button
+                @click="showPaymentModal = false"
+                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition-all"
+            >
+                Batal
+            </button>
+            <button
+                @click="processPayment()"
+                :disabled="nominalBayar < total() || !cart.length"
+                :class="{
+                    'bg-green-500 hover:bg-green-600 flex-1 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2':
+                        nominalBayar >= total() && cart.length,
+                    'bg-gray-400 cursor-not-allowed flex-1 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2':
+                        nominalBayar < total() || !cart.length
+                }"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Bayar Sekarang</span>
+            </button>
+        </div>
+    </div>
+</div>
 </div>
 
 <script>
@@ -324,6 +512,55 @@ function posApp(products, categories) {
         currentPage: 1,
         limit: 15,
         newItemsCount: 0,
+        showPaymentModal: false,
+        selectedCustomer: '',
+        paymentDate: new Date().toISOString().split('T')[0],
+        paymentMethod: 'tunai',
+        nominalBayar: 0,
+        pembayaranOptions: ['uang pas', '10rb', '20rb', '50rb', '100rb'],
+        kembalian() {
+            return this.nominalBayar - this.total();
+        },
+        processPayment() {
+            if (this.nominalBayar < this.total()) {
+                alert('Uang tidak cukup!');
+                return;
+            }
+
+            const data = {
+                cart: this.cart,
+                total: this.total(),
+                bayar: this.nominalBayar,
+                kembalian: this.kembalian(),
+                metode: this.paymentMethod,
+                customer: this.selectedCustomer,
+                tanggal: this.paymentDate,
+            };
+
+            console.log('TRANSAKSI:', data);
+
+            // 🔥 nanti bisa kirim ke backend pakai fetch / axios
+            // contoh:
+            /*
+            fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify(data)
+            });
+            */
+
+            // reset
+            this.cart = [];
+            this.nominalBayar = 0;
+            this.selectedCustomer = '';
+            this.paymentMethod = 'tunai';
+            this.showPaymentModal = false;
+
+            alert('Pembayaran berhasil!');
+        },
 
         init() {
             console.log('Products:', products);
